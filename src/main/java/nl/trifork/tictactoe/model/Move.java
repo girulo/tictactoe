@@ -9,19 +9,12 @@ public class Move {
     private Position position;
 
 
-
-//    public Move(int row, int column, Player player) {
-//        Position position = new Position(row, column);
-//        this.position = position;
-//        this.player = player;
-//    }
-
     public Move(Position position, boolean player) {
         this.position = position;
         this.player = player;
     }
 
-    public boolean isPlayer() {
+    public boolean getPlayer() {
         return player;
     }
 
