@@ -64,8 +64,8 @@ public class Position {
 
     public static Position randomPosition() {
 
-        int row = ThreadLocalRandom.current().nextInt(0, 3);
-        int column = ThreadLocalRandom.current().nextInt(0, 3);
+        int row = ThreadLocalRandom.current().nextInt(1, 4);
+        int column = ThreadLocalRandom.current().nextInt(1, 4);
 
         return new Position(row, column);
     }
