@@ -2,9 +2,9 @@ package nl.trifork.tictactoe.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Here we have implemented all the Logic of the game
@@ -14,7 +14,6 @@ public class Game {
 
     private List<Move> movesDone;
     private GameStatus actualStatus;
-//    private Map<Position, Player> board;
 
 
     /**
@@ -42,9 +41,9 @@ public class Game {
                 actualStatus = GameStatus.DRAW;
             else if (isWinner(player))
                 if (player == true)
-                    actualStatus = GameStatus.PLAYER_X_WINS;
-                else
                     actualStatus = GameStatus.PLAYER_O_WINS;
+                else
+                    actualStatus = GameStatus.PLAYER_X_WINS;
         }
         return actualStatus;
 
@@ -81,12 +80,18 @@ public class Game {
      */
     private boolean isAvailable (Position position) {
 
-        boolean available = true;
-        for (Move move: movesDone) {
-            if (move.getPosition().equals(position))
-                available = false;
-        }
-        return available;
+        //With Java 7
+//        boolean available = true;
+//        for (Move move: movesDone) {
+//            if (move.getPosition().equals(position))
+//                available = false;
+//        }
+//        return available;
+
+        return !movesDone.stream().anyMatch(
+                move -> move.getPosition().equals(position)
+        );
+
     }
 
     /**
@@ -116,25 +121,47 @@ public class Game {
     }
 
     /**
-     * Check if the given player is a winner or not
+     * Check if the given player is a winner or not based on the Position that he previously used
      *
      * @param player the player to check if is a winner or not
      *
      * @return true is the given player wins, otherwiser false
      */
+    @Deprecated
+    private boolean isWinneByPositions(boolean player) {
+
+        List<Position> movesFromPlayer = getPlayerPositions(player);
+
+        return getAllPossibleWinningCombinations().stream().anyMatch(
+                winningCombination -> movesFromPlayer.containsAll(winningCombination));
+
+    }
+
+    /**
+     * Check if the given player is a winner or not based on his Moves
+     *
+     * @param player the player to check if is a winner or not
+     *
+     * @return true is the given player wins, otherwiser false
+     */
+
     private boolean isWinner(boolean player) {
 
         boolean isWinner = false;
-        List<Position> movesFromPlayer = getPlayerPositions(player);
 
-        if(movesFromPlayer.size() >= 3)
-            for(List<Position> winningList : getAllPossibleWinningCombinations()) {
-                if (movesFromPlayer.containsAll(winningList)) {
-                    isWinner = true;
-                    break;
-                }
-            }
+        List<Move> playerMoves = movesDone.stream().filter(
+                move -> move.getPlayer() == player
+        ).collect(toList());
+
+        if (playerMoves.size() >= 3)
+            isWinner = getAllPossibleWinningCombinations().stream().anyMatch(
+                winningCombo -> playerMoves.stream().allMatch(
+                        move -> winningCombo.contains(move.getPosition())
+                )
+        );
+
         return isWinner;
+
     }
 
     /**
@@ -156,6 +183,7 @@ public class Game {
      *
      * @return a list with all the cell that eh clicked before
      */
+    @Deprecated
     private List<Position> getPlayerPositions(boolean player) {
 
         List<Position> playerMoves = new ArrayList<>();
