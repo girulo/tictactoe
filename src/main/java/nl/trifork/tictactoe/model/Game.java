@@ -40,7 +40,7 @@ public class Game {
             if (isDraw())
                 actualStatus = GameStatus.DRAW;
             else if (isWinner(player))
-                if (player == true)
+                if (player)
                     actualStatus = GameStatus.PLAYER_O_WINS;
                 else
                     actualStatus = GameStatus.PLAYER_X_WINS;
@@ -101,7 +101,7 @@ public class Game {
      */
     private static List<List<Position>> getAllPossibleWinningCombinations() {
 
-        List<List<Position>> winningLists = new ArrayList<List<Position>>();
+        List<List<Position>> winningLists = new ArrayList<>();
 
         //Winning Rows
         winningLists.add(asList(new Position(1, 1), new Position(1, 2), new Position(1, 3)));
@@ -128,12 +128,12 @@ public class Game {
      * @return true is the given player wins, otherwiser false
      */
     @Deprecated
-    private boolean isWinneByPositions(boolean player) {
+    private boolean isWinnerByPositions(boolean player) {
 
         List<Position> movesFromPlayer = getPlayerPositions(player);
 
         return getAllPossibleWinningCombinations().stream().anyMatch(
-                winningCombination -> movesFromPlayer.containsAll(winningCombination));
+                movesFromPlayer::containsAll);
 
     }
 
