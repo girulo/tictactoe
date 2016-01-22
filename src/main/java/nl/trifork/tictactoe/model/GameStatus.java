@@ -8,7 +8,7 @@ public enum GameStatus {
     PLAYING ("Playing"),
     DRAW ("The game is DRAW"),
     PLAYER_X_WINS ("Player X Wins"),
-    PLAYER_O_WINS ("Player Y Wins");
+    PLAYER_O_WINS ("Player O Wins");
 
     private String status;
 
