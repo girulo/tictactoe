@@ -1,39 +1,54 @@
 package nl.trifork.tictactoe.logic;
 
-import nl.trifork.tictactoe.model.Game;
-import nl.trifork.tictactoe.model.GameStatus;
-import nl.trifork.tictactoe.model.Position;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.google.gson.Gson;
+import nl.trifork.tictactoe.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author plaarakkers
  */
 @RestController
 @RequestMapping("/rest")
+
 public class RestLogicController {
 
-    private Game game;
-    private GameStatus status;
+    private final Game game;
+    private MoveResults moveResults;
 
-    public RestLogicController() {
-        game = new Game();
-        status = GameStatus.PLAYING;
+    @Autowired
+    public RestLogicController(Game game) {
+        this.game = game;
+        this.moveResults = new MoveResults();
+    }
+
+    @RequestMapping()
+    public int start(HttpServletRequest request) {
+
+        String playerName = (String)request.getSession().getAttribute("player");
+
+        if (game.newPlayer(playerName)) {
+            game.addPlayer(playerName);
+        }
+        int maxScore = game.start(playerName);
+        return maxScore;
     }
 
     @RequestMapping(value = "/executeTurn", method = RequestMethod.POST)
-    public String move(@RequestParam boolean turn,@RequestParam int column, @RequestParam int row) {
+    public String move(@RequestParam boolean turn, @RequestParam int column, @RequestParam int row) {
 
         //boolean computer = !turn;
         Position position = new Position(row, column);
 
-        status = game.addMovement(position, turn);
+        moveResults = game.addMovement(position, turn);
         //String rowColumnComputer = game.addComputerovement(computer);
 
+        Gson gson = new Gson();
 
-        return status.getStatus();
+        return gson.toJson(moveResults);
 
     }
 
