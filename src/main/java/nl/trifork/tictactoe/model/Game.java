@@ -80,19 +80,21 @@ public class Game {
             else
                 actualStatus = GameStatus.PLAYER_O_WINS;
 
-            long diffInSeconds = java.time.Duration.between(start, finish).getSeconds();
-            int moves = getPlayerPositions(player).size();
+            if (!player) {
+                long diffInSeconds = java.time.Duration.between(start, finish).getSeconds();
+                int moves = getPlayerPositions(player).size();
 
 
-            Double score = ((double)moves/diffInSeconds)*100;
+                Double score = ((double) moves / diffInSeconds) * 100;
 
-            List<Integer> scores = playersScoreList.get(playerName);
-            scores.add(score.intValue());
-            Collections.sort(scores, Collections.reverseOrder());
-            if (scores.size() > MAX_SCORES_PER_PLAYER)
-                scores = scores.subList(0, MAX_SCORES_PER_PLAYER);
-            moveResults.setMaxScore(scores.get(0));
-            playersScoreList.put(playerName, scores);
+                List<Integer> scores = playersScoreList.get(playerName);
+                scores.add(score.intValue());
+                Collections.sort(scores, Collections.reverseOrder());
+                if (scores.size() > MAX_SCORES_PER_PLAYER)
+                    scores = scores.subList(0, MAX_SCORES_PER_PLAYER);
+                moveResults.setMaxScore(scores.get(0));
+                playersScoreList.put(playerName, scores);
+            }
         }
 
 
